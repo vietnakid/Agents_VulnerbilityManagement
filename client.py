@@ -24,8 +24,8 @@ class Run():
     def format_Actions(self,request):
         actions_String= request['actions']
         list_actions= actions_String.split(',')
-        for i in enumerate (list_actions):
-            list_actions[i] =list_actions[i].upper().strip()
+        for i,item in enumerate (list_actions):
+            list_actions[i] =list_actions[i].strip()
         return list_actions
     def scan_options(self,request):
          nm= Nmap()
@@ -36,13 +36,13 @@ class Run():
          actions =self.format_Actions(request)
          if (len(actions)>0):
              for ac in actions:
-                if(ac == "SCAN"):
+                if(ac == "scan"):
                      result_scan= json.loads(nm.nmap_scanFull(ip))
                      result.update(result_scan)
-                if (ac == "OS"):
+                if (ac == "os"):
                      result_OS = json.loads(nm.nmap_detectOS(ip))
                      result.update(result_OS)
-                if (ac == "PORT"):
+                if (ac == "port"):
                      result_port = json.loads(nm.nmap_PortRangeScan(ip))
                      result.update(result_port)
          return json.dumps(result,indent=4)
