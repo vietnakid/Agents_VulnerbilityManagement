@@ -48,7 +48,7 @@ class Run():
          return json.dumps(result,indent=4)
 
 def main():
-    rawData = raw_input()
+    rawData = input()
     jData = json.loads(rawData)
     r = Run()
     result =r.scan_options(jData)
