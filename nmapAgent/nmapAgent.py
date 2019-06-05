@@ -18,12 +18,12 @@ class Nmap():
         cmd = ' '.join(opt)
         return cmd
 
-    def gen_fileName(self):
+    def gen_fileName(self, target):
         times = time.ctime()
-        self.fileName = time.strftime('%Y%m%d-%H%M%S.txt')
+        self.fileName = time.strftime(target+'_%Y%m%d-%H%M%S.xml')
 
     def runCmds(self, target):
-        cmd = self.gen_cmd(self.fileName)
+        cmd = self.gen_cmd(target)
         os.system(cmd)
 
     def parse_XMLtoJson(self):
@@ -31,39 +31,39 @@ class Nmap():
         xml_content = f.read()
         f.close()
         result = json.dumps(xmltodict.parse(
-            xml_content, xml_attribs=True), indent=4, sort_keys=True)
+            xml_content, xml_attribs=True))
         return result
 
 
 class Scan():
-    def __init__(self):
-        self.type = ""
-        self.target = ""
+    def __init__(self, request):
+         # "newScan" default type scan
+        self.type = request.get('type', "newScan")
+        # "localhost" default target scan
+        self.target = request.get('target', "localhost")
 
-    def run(self, request):
-        self.type = request['type']
-        self.target = request['target']
-
+    def run(self):
         if self.type == "newScan":
-            self.newScan(self.target)
+            self.newScan()
         elif self.type == "reScan":
             print('reScan Cumming')
         else:
             print('Not found')
 
-    def newScan(self, target):
+    def newScan(self):
         nm = Nmap()
-        nm.gen_fileName()
-        nm.runCmds(target)
+        nm.gen_fileName(self.target)
+        nm.runCmds(self.target)
         result = nm.parse_XMLtoJson()
         print(result)
 
 
 def main():
+    # {"type": "newScan", "target": "nmap.org"}
     rawData = input()
     jData = json.loads(rawData)
-    scan = Scan()
-    scan.run(jData)
+    scan = Scan(jData)
+    scan.run()
 
 
 if __name__ == "__main__":
