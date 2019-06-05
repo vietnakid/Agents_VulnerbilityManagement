@@ -25,8 +25,7 @@ class Nmap():
     def runCmds(self, target):
         cmd = self.gen_cmd(self.fileName)
         os.system(cmd)
-        print('Done')
-
+        
     def parse_XMLtoJson(self):
         f = open(self.fileName)
         xml_content = f.read()
