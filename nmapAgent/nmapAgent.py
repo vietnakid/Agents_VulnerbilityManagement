@@ -3,7 +3,6 @@
 import socket
 import json
 import pickle
-import nmap
 import os
 import time
 import xmltodict
