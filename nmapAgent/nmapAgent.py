@@ -2,10 +2,9 @@
 
 import socket
 import json
-import pickle
 import os
 import time
-import xmltodict
+from lib import xmltodict
 
 
 class Nmap():
@@ -24,6 +23,7 @@ class Nmap():
     def runCmds(self, target):
         cmd = self.gen_cmd(target)
         os.system(cmd)
+        os.system('clear')
 
     def parse_XMLtoJson(self):
         f = open(self.fileName)
