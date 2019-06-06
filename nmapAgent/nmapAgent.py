@@ -4,6 +4,7 @@ import socket
 import json
 import os
 import time
+import subprocess
 from lib import xmltodict
 
 
@@ -12,7 +13,7 @@ class Nmap():
         self.fileName = ""
 
     def gen_cmd(self, target):
-        opt = ['nmap', '-oX', self.fileName, '-A', target]
+        opt = ['nmap', '-oX', self.fileName, '-A', target, '> /dev/null']
         cmd = ' '.join(opt)
         return cmd
 
@@ -23,7 +24,6 @@ class Nmap():
     def runCmds(self, target):
         cmd = self.gen_cmd(target)
         os.system(cmd)
-        os.system('clear')
 
     def parse_XMLtoJson(self):
         f = open(self.fileName)
