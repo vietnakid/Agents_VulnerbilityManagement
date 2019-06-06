@@ -2,61 +2,67 @@
 
 import socket
 import json
-import pickle
-import nmap
+import os
+import time
+from lib import xmltodict
+
 
 class Nmap():
-    def nmap_scanFull(self,ip):
-        nm =nmap.PortScanner()
-        jdata = json.dumps(nm.scan(ip),indent=4)
-        print(type(jdata))
-        return jdata
+    def __init__(self):
+        self.fileName = ""
 
-    def nmap_detectOS(self,ip):
-        nm =nmap.PortScanner()
-        jdata = json.dumps(nm.scan(ip, arguments='-O' ),indent=4)
-        return jdata
+    def gen_cmd(self, target):
+        opt = ['nmap', '-oX', self.fileName, '-A', target, '> /dev/null']
+        cmd = ' '.join(opt)
+        return cmd
 
-    def nmap_PortRangeScan(self,ip):
-        nm =nmap.PortScanner()
-        jdata = json.dumps(nm.scan(ip, arguments="-sn -n -T5"),indent=4)
-        return jdata
+    def gen_fileName(self, target):
+        times = time.ctime()
+        self.fileName = time.strftime(target+'_%Y%m%d-%H%M%S.xml')
 
-class Run():
-    def format_Actions(self,request):
-        actions_String= request['actions']
-        list_actions= actions_String.split(',')
-        for i,item in enumerate (list_actions):
-            list_actions[i] =list_actions[i].strip()
-        return list_actions
-    def scan_options(self,request):
-         nm= Nmap()
-         result = {
-             "Status" :"OK"
-         }
-         ip = request["ip"]
-         actions =self.format_Actions(request)
-         if (len(actions)>0):
-             for ac in actions:
-                if(ac == "scan"):
-                     result_scan= json.loads(nm.nmap_scanFull(ip))
-                     result.update(result_scan)
-                if (ac == "os"):
-                     result_OS = json.loads(nm.nmap_detectOS(ip))
-                     result.update(result_OS)
-                if (ac == "port"):
-                     result_port = json.loads(nm.nmap_PortRangeScan(ip))
-                     result.update(result_port)
-         return json.dumps(result,indent=4)
+    def runCmds(self, target):
+        cmd = self.gen_cmd(target)
+        os.system(cmd)
+
+    def parse_XMLtoJson(self):
+        f = open(self.fileName)
+        xml_content = f.read()
+        f.close()
+        result = json.dumps(xmltodict.parse(
+            xml_content, xml_attribs=True))
+        return result
+
+
+class Scan():
+    def __init__(self, request):
+         # "newScan" default type scan
+        self.type = request.get('type', "newScan")
+        # "localhost" default target scan
+        self.target = request.get('target', "localhost")
+
+    def run(self):
+        if self.type == "newScan":
+            self.newScan()
+        elif self.type == "reScan":
+            print('reScan Cumming')
+        else:
+            print('Not found')
+
+    def newScan(self):
+        nm = Nmap()
+        nm.gen_fileName(self.target)
+        nm.runCmds(self.target)
+        result = nm.parse_XMLtoJson()
+        print(result)
+
 
 def main():
+    # {"type": "newScan", "target": "nmap.org"}
     rawData = input()
     jData = json.loads(rawData)
-    r = Run()
-    result =r.scan_options(jData)
-    print(result)
-    
+    scan = Scan(jData)
+    scan.run()
+
 
 if __name__ == "__main__":
     main()
-
