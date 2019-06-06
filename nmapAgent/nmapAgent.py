@@ -4,7 +4,6 @@ import socket
 import json
 import os
 import time
-import subprocess
 from lib import xmltodict
 
 
