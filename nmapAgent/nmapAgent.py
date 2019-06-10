@@ -4,7 +4,7 @@ import socket
 import json
 import os
 import time
-from lib import xmltodict
+from lib import parserXML
 
 
 class Nmap():
@@ -18,18 +18,14 @@ class Nmap():
 
     def gen_fileName(self, target):
         times = time.ctime()
-        self.fileName = time.strftime('/var/log/nmap' + target + '_%Y%m%d-%H%M%S.xml')
+        self.fileName = time.strftime('/var/log/nmap/' + target + '_%Y%m%d-%H%M%S.xml')
 
     def runCmds(self, target):
         cmd = self.gen_cmd(target)
         os.system(cmd)
 
     def parse_XMLtoJson(self):
-        f = open(self.fileName)
-        xml_content = f.read()
-        f.close()
-        result = json.dumps(xmltodict.parse(
-            xml_content, xml_attribs=True))
+        result = json.dumps(parserXML.nmap_xml_to_json(self.fileName)).encode('utf-8')
         return result
 
 
