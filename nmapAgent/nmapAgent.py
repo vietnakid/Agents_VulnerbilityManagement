@@ -12,7 +12,7 @@ class Nmap():
         self.fileName = ""
 
     def gen_cmd(self, target):
-        opt = ['nmap', '-sV', '-oX', self.fileName, '--top-ports 1000', '-p 1-10000', '-T4', target, '> /dev/null 2>&1']
+        opt = ['nmap', '-sV', '-oX', self.fileName, '--top-ports 1000', '-p 1-10000', '--open', '-T4', target, '> /dev/null 2>&1']
         cmd = ' '.join(opt)
         return cmd
 
