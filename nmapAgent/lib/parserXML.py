@@ -35,7 +35,7 @@ def nmap_xml_to_json(nmapFile):
 		'time':dom.find("runstats/finished").get('time')
 		}
 
-	scan_result['ip'] = dom.find("host/address").get('addr')
+	scan_result['target'] = dom.find("host/address").get('addr')
 	scan_result['hostname'] = dom.find("host/hostnames/hostname").get('name')
 	openports = {}
 	dports = dom.findall('host/ports/port')
