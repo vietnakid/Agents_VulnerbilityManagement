@@ -25,7 +25,7 @@ class Nmap():
         os.system(cmd)
 
     def parse_XMLtoJson(self):
-        result = json.dumps(parserXML.nmap_xml_to_json(self.fileName)).encode('utf-8')
+        result = json.dumps(parserXML.nmap_xml_to_json(self.fileName))
         return result
 
 
