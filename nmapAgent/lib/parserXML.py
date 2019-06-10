@@ -48,6 +48,7 @@ def nmap_xml_to_json(nmapFile):
 		ostype = dservice.get('ostype')
 		method = dservice.get('method')
 		conf = dservice.get('conf')
+		name = dservice.get('name')
 		dcpe = dservice.findall('cpe')
 		cpes = []
 		for j in dcpe:
@@ -60,7 +61,8 @@ def nmap_xml_to_json(nmapFile):
 			'ostype': ostype,
 			'method': method,
 			'conf': conf,
-			'cpe': cpes
+			'cpe': cpes,
+			'name': name
 		}
 
 	scan_result['openports'] = openports
