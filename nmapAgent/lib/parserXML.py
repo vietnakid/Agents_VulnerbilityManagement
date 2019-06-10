@@ -2,9 +2,13 @@ from xml.etree import ElementTree as ET
 import json
 
 def nmap_xml_to_json(nmapFile):
-	scan_result = {}
-	with open(nmapFile) as f:
-		nmap_xml_output = f.read()
+	scan_result = dict()
+	try:
+		with open(nmapFile) as f:
+			nmap_xml_output = f.read()
+	except:
+		scan_result = {'status': 'error', 'detail': 'File XML does not exists'}
+		return scan_result
 
 	if nmap_xml_output is not None:
 		_nmap_last_output = nmap_xml_output
@@ -69,3 +73,5 @@ def nmap_xml_to_json(nmapFile):
 	
 
 	return scan_result
+
+print nmap_xml_to_json('test')
