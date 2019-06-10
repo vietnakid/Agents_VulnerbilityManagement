@@ -71,6 +71,8 @@ def nmap_xml_to_json(nmapFile):
 
 	scan_result['openports'] = openports
 	
-
+	if bool(scan_result) != True:
+		scan_result = {'status': 'error', 'detail': 'Not type json'}
+		return scan_result
 	return scan_result
 
