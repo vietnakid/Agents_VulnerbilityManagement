@@ -74,4 +74,3 @@ def nmap_xml_to_json(nmapFile):
 
 	return scan_result
 
-print nmap_xml_to_json('test')
