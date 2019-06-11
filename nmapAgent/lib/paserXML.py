@@ -22,7 +22,7 @@ def nmap_xml_to_json(nmapFile):
 	down = dom.find("runstats/hosts").get('down')
 
 	if up == '0' and down == '0':
-		scan_result = {'status': 'error', 'detail': 'Nmap error'}
+		scan_result = {'status': 'error', 'detail': 'Nmap error, 0 up 0 down'}
 		return scan_result
 	elif down == '1':
 		scan_result = {'status': 'hostDown'}
@@ -35,19 +35,25 @@ def nmap_xml_to_json(nmapFile):
 		'time':dom.find("runstats/finished").get('time')
 		}
 
+
 	dhost = dom.find("host")
 	if dhost != None:
-		scan_result['ip'] = dhost.find("address").get('addr')
-		scan_result['hostname'] = dhost.find("hostnames/hostname").get('name')
-	else:
-		scan_result = {'status': 'error', 'detail': 'Nmap error'}
-		return scan_result
+		if dhost.find("address") != None:
+			scan_result['ip'] = dhost.find("address").get('addr')
+		else:
+			scan_result = {'status': 'error', 'detail': 'Nmap error, not found IP in XML file'}
+			return scan_result
+		if dhost.find("hostnames/hostname") != None:
+			scan_result['hostname'] = dhost.find("hostnames/hostname").get('name')
+		else:
+			scan_result['hostname'] = None
+
 	openports = {}
 	dports = dom.findall('host/ports/port')
-	if dports != None:
-		for i in dports:
-			dservice = i.find('service')
-			portid = i.get('portid')
+	for i in dports:
+		portid = i.get('portid')
+		dservice = i.find('service')
+		if dservice != None:
 			product = dservice.get('product')
 			version = dservice.get('version')
 			extrainfo = dservice.get('extrainfo')
@@ -58,18 +64,30 @@ def nmap_xml_to_json(nmapFile):
 			cpes = []
 			for j in dcpe:
 				cpes.append(j.text)
+		else:
+			product = None
+			version = None
+			extrainfo = None
+			ostype = None
+			method = None
+			conf = None
+			dcpe = None
+			cpes = []
 
-			openports[portid] = {
-				'product': product,
-				'version': version,
-				'extrainfo': extrainfo,
-				'ostype': ostype,
-				'method': method,
-				'conf': conf,
-				'cpe': cpes
-			}
+		openports[portid] = {
+			'product': product,
+			'version': version,
+			'extrainfo': extrainfo,
+			'ostype': ostype,
+			'method': method,
+			'conf': conf,
+			'cpe': cpes
+		}
 
-		scan_result['openports'] = openports
+	scan_result['openports'] = openports
 	
 
 	return scan_result
+
+#print (nmap_xml_to_json('vlxx.com_20190609-171213.xml'))
+#print (nmap_xml_to_json('10.22.194.10_20190611-140746.xml'))
