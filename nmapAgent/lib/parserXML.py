@@ -39,7 +39,7 @@ def nmap_xml_to_json(nmapFile):
 	dhost = dom.find("host")
 	if dhost != None:
 		if dhost.find("address") != None:
-			scan_result['ip'] = dhost.find("address").get('addr')
+			scan_result['target'] = dhost.find("address").get('addr')
 		else:
 			scan_result = {'status': 'error', 'detail': 'Nmap error, not found IP in XML file'}
 			return scan_result
