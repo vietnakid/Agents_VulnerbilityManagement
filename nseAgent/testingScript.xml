@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.70 scan initiated Wed Jun 12 10:17:34 2019 as: nmap -oX testingScript.xml -p 22,80,6969,443 -&#45;script=default,vuln,exploit ctf.fu-ehc.club -->
+<nmaprun scanner="nmap" args="nmap -oX testingScript.xml -p 22,80,6969,443 -&#45;script=default,vuln,exploit ctf.fu-ehc.club" start="1560334654" startstr="Wed Jun 12 10:17:34 2019" version="7.70" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="4" services="22,80,443,6969"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1560334670" endtime="1560334965"><status state="up" reason="reset" reason_ttl="37"/>
+<address addr="149.28.147.240" addrtype="ipv4"/>
+<hostnames>
+<hostname name="ctf.fu-ehc.club" type="user"/>
+<hostname name="149.28.147.240.vultr.com" type="PTR"/>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="37"/><service name="ssh" method="table" conf="3"/><script id="ssh-hostkey" output="&#xa;  2048 c0:36:34:fb:4f:29:64:27:7b:f8:47:c5:24:9d:fb:c3 (RSA)&#xa;  256 e6:08:7c:d8:19:8a:08:1f:06:66:13:77:85:da:06:17 (ECDSA)&#xa;  256 1e:31:5f:cd:28:97:3d:e4:b0:b0:ee:e8:56:38:9c:3b (ED25519)"><table>
+<elem key="fingerprint">c03634fb4f2964277bf847c5249dfbc3</elem>
+<elem key="bits">2048.0</elem>
+<elem key="key">AAAAB3NzaC1yc2EAAAADAQABAAABAQDgYCIEUKCGcBOUd22DI5xffw3S13rSN+BMEpTWGJXYav3npiScqYjKU5JcBGxpg7ZAzh5jcQT5WfJmpUxFLPlkoq64v8VQSYpj7ZcD7uDsHvbMhoN7J77le5WLrMRQTsvHpl3FYGKCuPq7Co/JEKTWxUvESwbDzM52NdLUUOM5zcNmuMkP8X2y2BrrNR/v6uTP57FAJCXwq3IDBsOql6gupphMfj6o4gRuiQfxOfh8WRQx9gwZ7ebhZ2jJ4K5SPrxl7BsJGkcHRQYE0pO8/J8uhDHBYXXU0TGe/GVMPBCewuJd/K5lap75h/G1SWA5w36PQi1LAA+gMbNX9VT6wGOP</elem>
+<elem key="type">ssh-rsa</elem>
+</table>
+<table>
+<elem key="fingerprint">e6087cd8198a081f0666137785da0617</elem>
+<elem key="bits">256</elem>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNfH2HQuicQkmqgQybHHbSN42ZHb4Ua0u5oZSoMJzc6NTLtEvVt5AZ20jIZ5IUJE1SbuvTVazrGDURkWE+rCL6M=</elem>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+</table>
+<table>
+<elem key="fingerprint">1e315fcd28973de4b0b0eee856389c3b</elem>
+<elem key="bits">256</elem>
+<elem key="key">AAAAC3NzaC1lZDI1NTE5AAAAIJv3uTzjUq3e8VODV2lGDWsQagvFaY6CXPG8InMzN924</elem>
+<elem key="type">ssh-ed25519</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="37"/><service name="http" method="table" conf="3"/><script id="http-csrf" output="Couldn&apos;t find any CSRF vulnerabilities."/><script id="http-dombased-xss" output="Couldn&apos;t find any DOM based XSS."/><script id="http-fileupload-exploiter" output="&#xa;  &#xa;    Couldn&apos;t find a file-type field.&#xa;  &#xa;    Couldn&apos;t find a file-type field."><table>
+<elem>Couldn&apos;t find a file-type field.</elem>
+</table>
+<table>
+<elem>Couldn&apos;t find a file-type field.</elem>
+</table>
+</script><script id="http-stored-xss" output="Couldn&apos;t find any stored XSS vulnerabilities."/><script id="http-title" output="EHC"><elem key="title">EHC</elem>
+</script></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="37"/><service name="https" method="table" conf="3"/><script id="http-aspnet-debug" output="ERROR: Script execution failed (use -d to debug)"/><script id="http-csrf" output="Couldn&apos;t find any CSRF vulnerabilities."/><script id="http-dombased-xss" output="Couldn&apos;t find any DOM based XSS."/><script id="http-stored-xss" output="Couldn&apos;t find any stored XSS vulnerabilities."/><script id="http-vuln-cve2014-3704" output="ERROR: Script execution failed (use -d to debug)"/><script id="ssl-ccs-injection" output="No reply from server (TIMEOUT)"/><script id="sslv2-drown" output="&#xa;"></script></port>
+<port protocol="tcp" portid="6969"><state state="open" reason="syn-ack" reason_ttl="37"/><service name="acmsoda" method="table" conf="3"/></port>
+</ports>
+<times srtt="29324" rttvar="39650" to="187924"/>
+</host>
+<runstats><finished time="1560334965" timestr="Wed Jun 12 10:22:45 2019" elapsed="311.00" summary="Nmap done at Wed Jun 12 10:22:45 2019; 1 IP address (1 host up) scanned in 311.00 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

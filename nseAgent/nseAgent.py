@@ -16,9 +16,9 @@ class Nmap():
         cmd = ' '.join(opt)
         return cmd
 
-    def gen_fileName(self, target):
+    def gen_fileName(self, target, port):
         times = time.ctime()
-        self.fileName = time.strftime('/var/log/nse/' + target + '_%Y%m%d-%H%M%S.xml')
+        self.fileName = time.strftime('/var/log/nse/' + target + '_' + port + '_%Y%m%d-%H%M%S.xml')
         #self.fileName = 'testScript.xml'
 
     def runCmds(self, target, port):
@@ -39,11 +39,14 @@ class Scan():
         results = dict()
         nm = Nmap()
         results['target'] = self.target
+        listPort = list()
         for port in self.ports:
-            nm.gen_fileName(self.target)
-            nm.runCmds(self.target, port)
-            result = nm.parse_XMLtoJson()
-            results.update(json.loads(result))
+            listPort.append(port)
+        strListPort = ','.join(listPort)
+        nm.gen_fileName(self.target, listPort)
+        nm.runCmds(self.target, listPort)
+        result = nm.parse_XMLtoJson()
+        results.update(json.loads(result))
 
         print(json.dumps(results))
 
