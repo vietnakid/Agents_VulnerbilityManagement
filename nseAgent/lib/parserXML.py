@@ -117,4 +117,4 @@ def returnError(error):
 	scan_result = {'status': 'error', 'detail': error}
 	return scan_result
 
-print (nmap_xml_to_json('../nse/149.28.147.240_20190612-085458.xml'))
+#print (nmap_xml_to_json('../nse/149.28.147.240_20190612-085458.xml'))
