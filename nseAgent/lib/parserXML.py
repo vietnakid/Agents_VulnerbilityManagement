@@ -58,7 +58,7 @@ def nmap_xml_to_json(nmapFile):
 	except Exception as e:
 		return returnError(e)
 
-	dports = dom.findAll('host/ports/port')
+	dports = dom.findall('host/ports/port')
 	for i in dports:
 		portid = i.get('portid')
 		dscript = i.findall('script')
@@ -81,4 +81,4 @@ def returnError(error):
 	scan_result = {'status': 'error', 'detail': error}
 	return scan_result
 
-#print (nmap_xml_to_json('../nse/149.28.147.240_20190612-085458.xml'))
+print (json.dumps(nmap_xml_to_json('testingScript.xml')))
