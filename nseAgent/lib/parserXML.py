@@ -81,4 +81,4 @@ def returnError(error):
 	scan_result = {'status': 'error', 'detail': error}
 	return scan_result
 
-print (json.dumps(nmap_xml_to_json('testingScript.xml')))
+#print (json.dumps(nmap_xml_to_json('testingScript.xml')))
