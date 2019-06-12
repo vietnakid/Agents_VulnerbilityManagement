@@ -98,4 +98,4 @@ def returnError(error):
 	scan_result = {'status': 'error', 'detail': error}
 	return scan_result
 
-#dom.findall('host/ports/port')print (nmap_xml_to_json('test.xml'))
+#print (json.dumps(nmap_xml_to_json('testScript.xml')))
