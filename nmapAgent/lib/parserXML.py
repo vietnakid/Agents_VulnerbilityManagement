@@ -35,7 +35,6 @@ def nmap_xml_to_json(nmapFile):
 	dfinished = dom.find("runstats/finished")
 	if dfinished != None:
 		scan_result['scanstats'] = {
-			'timestr':dfinished.get('timestr'),
 			'elapsed':dfinished.get('elapsed'),
 			'time':dfinished.get('time')
 			}

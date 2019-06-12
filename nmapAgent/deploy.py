@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #coding=utf8
 
 import os
@@ -29,6 +29,12 @@ open('/etc/services','a').write(nmapService)
 print('[OK] Added new service to /etc/services')
 
 system('/etc/init.d/xinetd restart')
+
+# create Log Path
+path = "/var/log/nmap"
+os.mkdir(path, 0755)
+
+print ("Log Path is created")
 
 print('''
 ============================

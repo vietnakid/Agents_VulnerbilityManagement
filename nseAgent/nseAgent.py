@@ -33,26 +33,21 @@ class Nmap():
 class Scan():
     def __init__(self, request):
         self.target = request.get('target', 'localhost')
-        self.ports = request.get('openports', {})
+        self.ports = request.get('openports', [])
 
     def run(self):
         results = dict()
         nm = Nmap()
-        results['target'] = self.target
-        listPort = list()
-        for port in self.ports:
-            listPort.append(port)
-        strListPort = ','.join(listPort)
+        strListPort = ','.join(self.ports)
         nm.gen_fileName(self.target, strListPort)
         nm.runCmds(self.target, strListPort)
-        result = nm.parse_XMLtoJson()
-        results.update(json.loads(result))
+        results = nm.parse_XMLtoJson()
 
-        print(json.dumps(results))
+        print(results)
 
 
 def main():
-    # {"type": "newScan", "target": "nmap.org"}
+    # {"target": "ctf.fu-ehc.club", "openports": ["80", "443"]}
     rawData = input()
     jData = json.loads(rawData)
     scan = Scan(jData)

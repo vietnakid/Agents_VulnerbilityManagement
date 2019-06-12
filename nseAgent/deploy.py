@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #coding=utf8
 
 import os
@@ -7,28 +7,34 @@ import sys
 
 cwd = os.getcwd()
 
-nmapAgent = '''service nmapAgent
+nseAgent = '''service nseAgent
 {
         socket_type     = stream
         protocol        = tcp
         user            = root
         wait            = no
         server          = /usr/bin/python3
-        server_args     = %s/nmapAgent.py -u
+        server_args     = %s/nseAgent.py -u
         port            = 25798
 }
 ''' % cwd
 
-nmapService = 'nseAgent       25798/tcp                       # nseAgent'
+nseService = 'nseAgent       25798/tcp                       # nseAgent'
 
 
-open('/etc/xinetd.d/nseAgent','w').write(nmapAgent)
+open('/etc/xinetd.d/nseAgent','w').write(nseAgent)
 print('[OK] Added to xinetd.d')
 
-open('/etc/services','a').write(nmapService)
+open('/etc/services','a').write(nseService)
 print('[OK] Added new service to /etc/services')
 
 system('/etc/init.d/xinetd restart')
+
+# create Log Path
+path = "/var/log/nse"
+os.mkdir(path)
+
+print ("Log Path is created")
 
 print('''
 ============================

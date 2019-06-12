@@ -58,11 +58,34 @@ def nmap_xml_to_json(nmapFile):
 	except Exception as e:
 		return returnError(e)
 
+	scan_result['status'] = 'hostUp'
+
+	dhost = dom.find("host")
+	if dhost != None:
+		if dhost.find("address") != None:
+			scan_result['target'] = dhost.find("address").get('addr')
+		else:
+			return returnError('Nmap error, not found IP in XML file')
+		if dhost.find("hostnames/hostname") != None:
+			scan_result['hostname'] = dhost.find("hostnames/hostname").get('name')
+		else:
+			scan_result['hostname'] = None
+
+	dfinished = dom.find("runstats/finished")
+	if dfinished != None:
+		scan_result['scanstats'] = {
+			'elapsed':dfinished.get('elapsed'),
+			'time':dfinished.get('time')
+			}
+	else:
+		return returnError('Nmap did not finished')
+
+	nseOutputs = {}
+
 	dports = dom.findall('host/ports/port')
 	for i in dports:
 		portid = i.get('portid')
 		dscript = i.findall('script')
-		scan_result[portid] = dict()
 		resultz = dict()
 		if dscript != None:
 			for j in dscript:
@@ -73,7 +96,9 @@ def nmap_xml_to_json(nmapFile):
 		else:
 			script = None
 			output = None
-		scan_result[portid].update(resultz)
+		nseOutputs[portid]= resultz
+
+	scan_result['nseOutputs'] = nseOutputs
 
 	return scan_result
 
@@ -81,4 +106,4 @@ def returnError(error):
 	scan_result = {'status': 'error', 'detail': error}
 	return scan_result
 
-#print (json.dumps(nmap_xml_to_json('testingScript.xml')))
+# print (json.dumps(nmap_xml_to_json('testingScript.xml')))
