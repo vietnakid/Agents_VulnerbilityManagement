@@ -95,22 +95,21 @@ def nmap_xml_to_json(nmapFile):
 	# 	else:
 	# 		scan_result['hostname'] = None
 
-	dports = dom.findall('host/ports/port')
-	for i in dports:
-		portid = i.get('portid')
-		dscript = i.findall('script')
-		if dscript != None:
-			for j in dscript:
-				script = j.get('id')
-				output = j.get('output')
-		else:
-			script = None
-			output = None
-
-		scan_result[portid] = {
-			'script': script,
-			'output': output
-		}
+	dports = dom.find('host/ports/port')
+	portid = dports.get('portid')
+	dscript = dports.findall('script')
+	scan_result[portid] = dict()
+	resultz = dict()
+	if dscript != None:
+		for j in dscript:
+			script = j.get('id')
+			output = j.get('output')
+			resultz[script] = {'output': output}
+			
+	else:
+		script = None
+		output = None
+	scan_result[portid].update(resultz)
 
 	return scan_result
 
@@ -118,4 +117,4 @@ def returnError(error):
 	scan_result = {'status': 'error', 'detail': error}
 	return scan_result
 
-#print (nmap_xml_to_json('testScript.xml'))
+print (nmap_xml_to_json('../nse/149.28.147.240_20190612-085458.xml'))
