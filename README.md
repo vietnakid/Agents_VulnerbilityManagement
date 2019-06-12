@@ -1,8 +1,8 @@
 # Agents_VunerbilityManagement
 Agents_VunerbilityManagement
 
-##Install
-###Install requirement tools
+## Install
+### Install requirement tools
 * Agent machine need to install: nmap, xinetd and python3
 ```
 sudo apt-get update
@@ -15,7 +15,7 @@ mkdir -p /var/log/nmap
 mkdir -p /var/log/nse
 ```
 
-###Deploy Agent
+### Deploy Agent
 
 * For Nmap Agent:
 	Change directory to `nmapAgent` and run `python3 deploy.py`
