@@ -22,3 +22,8 @@ mkdir -p /var/log/nse
 
 * For NSE Agent:
 	Change directory to `nseAgent` and run `python3 deploy.py`
+
+* For Wappalyzer Agent:
+	* Install nodejs and npm first (Google scan for this step)
+	* Use npm to install wappalyzer package in `https://www.npmjs.com/package/wappalyzer` by this command `npm i -g wappalyzer`
+	* Change directory to `wappalyzerAgent` and run `python3 deploy.py`
