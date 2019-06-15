@@ -24,9 +24,12 @@ class Nmap():
         cmd = self.gen_cmd(target)
         os.system(cmd)
 
-    def parse_XMLtoJson(self):
-        result = json.dumps(parserXML.nmap_xml_to_json(self.fileName))
-        return result
+    def parse_XMLtoJson(self, target):
+        result = parserXML.nmap_xml_to_json(self.fileName)
+        if 'target' not in result:
+            result['target'] = target
+        _result = json.dumps(result)
+        return _result
 
 
 class Scan():
@@ -48,7 +51,7 @@ class Scan():
         nm = Nmap()
         nm.gen_fileName(self.target)
         nm.runCmds(self.target)
-        result = nm.parse_XMLtoJson()
+        result = nm.parse_XMLtoJson(self.target)
         f = open(nm.fileName + '.txt', "w")
         f.write(result)
         f.close()

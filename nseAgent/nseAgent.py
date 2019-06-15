@@ -25,9 +25,12 @@ class Nmap():
         cmd = self.gen_cmd(target, port)
         os.system(cmd)
 
-    def parse_XMLtoJson(self):
-        result = json.dumps(parserXML.nmap_xml_to_json(self.fileName))
-        return result
+    def parse_XMLtoJson(self, target):
+        result = parserXML.nmap_xml_to_json(self.fileName)
+        if 'target' not in result:
+            result['target'] = target
+        _result = json.dumps(result)
+        return _result
 
 
 class Scan():
@@ -41,13 +44,13 @@ class Scan():
         strListPort = ','.join(self.ports)
         nm.gen_fileName(self.target, strListPort)
         nm.runCmds(self.target, strListPort)
-        results = nm.parse_XMLtoJson()
-
+        results = nm.parse_XMLtoJson(self.target)
         print(results)
 
 
 def main():
     # {"target": "ctf.fu-ehc.club", "openports": ["80", "443"]}
+    #{"target": "192.168.31.12", "openports": ["80", "443"]}
     rawData = input()
     jData = json.loads(rawData)
     scan = Scan(jData)

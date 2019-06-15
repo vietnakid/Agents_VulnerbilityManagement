@@ -68,6 +68,19 @@ def nmap_xml_to_json(nmapFile):
 			}
 	else:
 		return returnError('Nmap did not finished')
+	
+	dhosts = dom.find("runstats/hosts")
+	if dhosts != None:
+		up = dhosts.get('up')
+		down = dhosts.get('down')
+	else:
+		return returnError('Could\'t find up and down status')
+
+	if up == '0' and down == '0':
+		return returnError('Nmap error, 0 up 0 down')
+	elif down == '1':
+		scan_result['status'] = 'hostDown'
+		return scan_result
 		
 	dhost = dom.find("host")
 	if dhost != None:
