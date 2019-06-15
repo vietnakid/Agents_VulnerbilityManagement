@@ -52,6 +52,8 @@ def nmap_xml_to_json(nmapFile):
 			scan_result['hostname'] = dhost.find("hostnames/hostname").get('name')
 		else:
 			scan_result['hostname'] = None
+	else:
+		return returnError('Nmap error, nmap did not finished')
 
 	openports = {}
 	dports = dom.findall('host/ports/port')
