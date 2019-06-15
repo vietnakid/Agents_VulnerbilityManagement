@@ -19,7 +19,7 @@ nmapAgent = '''service nmapAgent
 }
 ''' % cwd
 
-nmapService = 'nmapAgent       25797/tcp                       # nmapAgent'
+nmapService = 'nmapAgent       25797/tcp                       # nmapAgent\n'
 
 
 open('/etc/xinetd.d/nmapAgent','w').write(nmapAgent)
@@ -32,7 +32,7 @@ system('/etc/init.d/xinetd restart')
 
 # create Log Path
 path = "/var/log/nmap"
-os.mkdir(path, 0755)
+os.mkdir(path)
 
 print ("Log Path is created")
 

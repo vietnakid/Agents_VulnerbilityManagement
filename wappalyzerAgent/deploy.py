@@ -7,32 +7,28 @@ import sys
 
 cwd = os.getcwd()
 
-nseAgent = '''service nseAgent
+wappalyzerAgent = '''service wappalyzerAgent
 {
         socket_type     = stream
         protocol        = tcp
         user            = root
         wait            = no
         server          = /usr/bin/python3
-        server_args     = %s/nseAgent.py -u
-        port            = 25798
+        server_args     = %s/wappalyzerAgent.py -u
+        port            = 11497
 }
 ''' % cwd
 
-nseService = 'nseAgent       25798/tcp                       # nseAgent\n'
+wappalyzerService = 'wappalyzerAgent       11497/tcp                       # wappalyzerAgent\n'
 
 
-open('/etc/xinetd.d/nseAgent','w').write(nseAgent)
+open('/etc/xinetd.d/wappalyzerAgent','w').write(wappalyzerAgent)
 print('[OK] Added to xinetd.d')
 
-open('/etc/services','a').write(nseService)
+open('/etc/services','a').write(wappalyzerService)
 print('[OK] Added new service to /etc/services')
 
 system('/etc/init.d/xinetd restart')
-
-# create Log Path
-path = "/var/log/nse"
-os.mkdir(path)
 
 print ("Log Path is created")
 
