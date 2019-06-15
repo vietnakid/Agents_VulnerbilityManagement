@@ -60,6 +60,15 @@ def nmap_xml_to_json(nmapFile):
 
 	scan_result['status'] = 'hostUp'
 
+	dfinished = dom.find("runstats/finished")
+	if dfinished != None:
+		scan_result['scanstats'] = {
+			'elapsed':dfinished.get('elapsed'),
+			'time':dfinished.get('time')
+			}
+	else:
+		return returnError('Nmap did not finished')
+		
 	dhost = dom.find("host")
 	if dhost != None:
 		if dhost.find("address") != None:
@@ -73,14 +82,6 @@ def nmap_xml_to_json(nmapFile):
 	else:
 		return returnError('Nmap error, nmap did not finished')
 
-	dfinished = dom.find("runstats/finished")
-	if dfinished != None:
-		scan_result['scanstats'] = {
-			'elapsed':dfinished.get('elapsed'),
-			'time':dfinished.get('time')
-			}
-	else:
-		return returnError('Nmap did not finished')
 
 	nseOutputs = {}
 
