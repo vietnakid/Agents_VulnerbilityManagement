@@ -16,16 +16,20 @@ def main():
 		for pre in prefix:
 			finalTarget = pre + targetObject.get('target') + ':' + openport + '/'
 			cmd = ['wappalyzer', finalTarget]
-			result = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+			result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			jobs.append(result)
 	for job in jobs:
-		output = job.communicate()[0]
-		_result = output.decode('utf-8')
-		__result = json.loads(_result)
-		finalTarget = list(__result.get('urls').keys())[0]
-		if 'error' not in __result.get('urls').get(finalTarget):
-			resultObject['result'][finalTarget] = __result
-	print (json.dumps(resultObject.))
+		try:
+			output = job.communicate()[0]
+			_result = output.decode('utf-8')
+			__result = json.loads(_result)
+			finalTarget = list(__result.get('urls').keys())[0]
+			if 'error' not in __result.get('urls').get(finalTarget):
+				resultObject['result'][finalTarget] = __result
+		except:
+			pass
+	print (json.dumps(resultObject))
 
 if __name__ == "__main__":
+	# {"target": "genk.vn", "hostname": "genk.vn", "openports": ["80", "443", "5666", "8089"]}
 	main()
