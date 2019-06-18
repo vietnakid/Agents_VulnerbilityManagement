@@ -34,3 +34,8 @@ mkdir -p /var/log/nse
 	* Install xinetd
 	* If you not using docker, you have to re-configure in the deploy.py file. We recommend to use docker at here: https://hub.docker.com/r/ttimasdf/cve-search/
 	* Change directory to `cveSearchAgent` and run `python3 deploy.py`
+
+* For Acunetix Agent:
+	* If you already have Acunetix, please fill your login to Acunetix in `Config/config.py`
+	* If you don't have Acunetix, we recommend you to use docker at here to try free for 14 days: `https://hub.docker.com/r/dictcp/acunetix`
+	* Change directory to `acunetixhAgent` and run `python3 deploy.py`
