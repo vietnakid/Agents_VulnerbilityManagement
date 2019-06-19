@@ -23,7 +23,7 @@ def run(address, scan_type):
 			if scan_stat.get('status') == 'completed':
 				break
 		
-		scan_stat = acunetix.scan_status(scan_id=scan_id, extra_stats=False)
+		scan_stat = acunetix.scan_status(scan_id=scan_id, extra_stats=True)
 		objects['scan_stat'] = scan_stat
 
 		scan_vuls = acunetix.get_scan_vulnerabilities(scan_id=scan_id)
