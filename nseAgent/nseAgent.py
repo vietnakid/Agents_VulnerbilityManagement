@@ -49,8 +49,8 @@ class Scan():
 
 
 def main():
-    # {"target": "ctf.fu-ehc.club", "openports": ["80", "443"]}
-    #{"target": "192.168.31.12", "openports": ["80", "443"]}
+    # {"target": "localhost", "openports": ["631"]}
+    # {"target": "192.168.31.12", "openports": ["80", "443"]}
     rawData = input()
     jData = json.loads(rawData)
     scan = Scan(jData)

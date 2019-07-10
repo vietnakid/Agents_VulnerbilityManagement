@@ -26,10 +26,11 @@ def nmap_xml_to_json(nmapFile):
 
 	dfinished = dom.find("runstats/finished")
 	if dfinished != None:
-		scan_result['scanstats'] = {
-			'elapsed':dfinished.get('elapsed'),
-			'time':dfinished.get('time')
-			}
+		# scan_result['scanstats'] = {
+		# 	'elapsed':dfinished.get('elapsed'),
+		# 	'time':dfinished.get('time')
+		# 	}
+		pass
 	else:
 		return returnError('Nmap did not finished')
 
@@ -56,7 +57,7 @@ def nmap_xml_to_json(nmapFile):
 	else:
 		return returnError('Nmap error, nmap did not finished')
 
-	openports = {}
+	openports = []
 	dports = dom.findall('host/ports/port')
 	for i in dports:
 		portid = i.get('portid')
@@ -82,7 +83,8 @@ def nmap_xml_to_json(nmapFile):
 			dcpe = None
 			cpes = []
 
-		openports[portid] = {
+		openports.append({
+			'port': portid,
 			'product': product,
 			'version': version,
 			'extrainfo': extrainfo,
@@ -90,7 +92,7 @@ def nmap_xml_to_json(nmapFile):
 			'method': method,
 			'conf': conf,
 			'cpe': cpes
-		}
+		})
 
 	scan_result['openports'] = openports
 

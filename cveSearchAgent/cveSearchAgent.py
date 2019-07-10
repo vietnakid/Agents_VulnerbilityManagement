@@ -14,13 +14,13 @@ def main():
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         jobs.append((cpe, process))
 
-    outputResult = dict()
+    outputResult = []
     
     for job in jobs:
         try:
             process = job[1]
             jOutputs = process.communicate()[0].decode('utf-8').split('\n')
-            cpeOutput = []
+            cpe = job[0]
             for jOutput in jOutputs:
                 try:
                     output = json.loads(jOutput)
@@ -28,11 +28,10 @@ def main():
                     res['cve'] = output.get("id")
                     res['cvss'] = output.get("cvss")
                     res['cwe'] = output.get("cwe")
-                    cpeOutput.append(res)
+                    res['cpe'] = cpe
+                    outputResult.append(res)
                 except Exception as e:
                     pass
-            cpe = job[0]
-            outputResult[cpe] = cpeOutput
         except Exception as e:
             print("Exception =", e)
             traceback.print_exc()
