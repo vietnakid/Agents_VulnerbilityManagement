@@ -3,14 +3,40 @@ from Config import config
 import json
 import time
 import signal
+import pickle
+
+def save_object(obj):
+	try:
+		with open('./obj_acu.pkl', 'wb') as obj_file:
+			pickle.dump(obj, obj_file)
+	except:
+		return None
+
+def load_object():
+	try:
+		with open('./obj_acu.pkl', 'rb') as obj_file:
+			obj = pickle.load(obj_file)
+			return (obj)
+	except:
+		return None
 
 def run(address, scan_type):
 	cf = config.Config()
 	acunetix = Acunetix(username = cf.username, password = cf.password, domain = cf.domain, ssl_verify = cf.ssl_verify)
 	try:
-		acunetix.login()
+		_acunetix = load_object()
+		if _acunetix != None:
+			_acunetix.url = 'https://' + cf.domain
+			if _acunetix.check_logging() == False:
+				acunetix.login()
+				save_object(acunetix)
+			else:
+				acunetix = _acunetix
+		else:
+			acunetix.login()
+			save_object(acunetix)
 		target = acunetix.create_target(address=address, description='Creating scan for ' + address)
-		#print target
+		# print (target)
 		target_id = target.get('target_id')
 		#print target_id
 		scan_id = acunetix.create_scan(target_id=target_id, scan_type=scan_type)
@@ -19,6 +45,7 @@ def run(address, scan_type):
 		#print scan_id
 		while True:
 			time.sleep(10)
+			# print (acunetix.check_logging())
 			scan_stat = acunetix.scan_status(scan_id=scan_id, extra_stats=False)
 			if scan_stat.get('status') == 'completed':
 				break
@@ -34,7 +61,7 @@ def run(address, scan_type):
 			objects['scan_details'].append(vuls_details)
 			#print vuls_details
 
-		acunetix.delete_target(target_id)
+		# acunetix.delete_target(target_id)
 		objects['target'] = address
 		# objects['scan_type'] = scan_type
 		print (json.dumps(objects))
@@ -45,7 +72,8 @@ def run(address, scan_type):
 		print (json.dumps(error))
 		pass
 	finally:
-		acunetix.logout()
+		# acunetix.logout()
+		pass
 
 def main():
 	#{"scan_type": "High Risk Vulnerabilities", "target": "http://testphp.vulnweb.com"}
