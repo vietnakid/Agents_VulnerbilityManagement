@@ -1,7 +1,6 @@
 import hashlib
 import requests
 
-
 class AuthenticationError(Exception):
     pass
 
@@ -21,7 +20,6 @@ class Acunetix(requests.Session):
         self.verify = ssl_verify
 
         self.timeout = 2
-
         self.headers = {
             "Accept": "application / json, text / plain, * / *",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36",
@@ -41,7 +39,7 @@ class Acunetix(requests.Session):
         try:
             return super(Acunetix, self).request(timeout=1, *args, **kwargs)
         except Exception as e:
-            print("[!] Error : {}".format(e.__repr__()))
+            # print("[!] Error : {}".format(e.__repr__()))
             return False
 
     def login(self):
@@ -50,7 +48,7 @@ class Acunetix(requests.Session):
         :return: Server info like license, expiry etc
         """
         url = self.url + "/api/v1/me/login"
-        data = {"email": self.username, "password": self.password, "remember_me": False}
+        data = {"email": self.username, "password": self.password, "remember_me": True}
         resp = self.post(url, json=data)
         if resp.status_code == 204 and "X-Auth" in resp.headers:
             self.authenticated = True
@@ -69,6 +67,18 @@ class Acunetix(requests.Session):
         if resp.status_code == 204:
             self.authenticated = False
         return self.authenticated
+
+    def check_logging(self):
+        try:
+            url = self.url + "/api/v1/me/stats"
+            resp = self.get(url)
+            if 'most_vulnerable_targets' in resp.text:
+                self.authenticated = True
+                return True
+            return False
+        except Exception as e:
+            print (e)
+            return False
 
     def check_connectivity(self):
         """
