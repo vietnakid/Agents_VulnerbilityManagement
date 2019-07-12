@@ -4,6 +4,7 @@ import json
 import time
 import signal
 import pickle
+import traceback
 
 def save_object(obj):
 	try:
@@ -68,7 +69,7 @@ def run(address, scan_type):
 	except KeyboardInterrupt:
 		print("Interrupt received, stopping...")
 	except Exception as e:
-		error = {'error': e}
+		error = {'error': str(e)}
 		print (json.dumps(error))
 		pass
 	finally:
@@ -76,7 +77,7 @@ def run(address, scan_type):
 		pass
 
 def main():
-	#{"scan_type": "High Risk Vulnerabilities", "target": "http://testphp.vulnweb.com"}
+	#{"acunetix_scan_type": "High Risk Vulnerabilities", "target_url": "http://testphp.vulnweb.com"}
 	rawData = input()
 	jData = json.loads(rawData)
 	scan_type = jData.get('acunetix_scan_type')

@@ -39,8 +39,7 @@ class Acunetix(requests.Session):
         try:
             return super(Acunetix, self).request(timeout=1, *args, **kwargs)
         except Exception as e:
-            # print("[!] Error : {}".format(e.__repr__()))
-            return False
+            raise e
 
 
     def login(self):
@@ -56,7 +55,7 @@ class Acunetix(requests.Session):
             self.headers.update({"X-Auth": resp.headers['X-Auth']})
             return self.me
         else:
-            raise AuthenticationError("Failed to authenticate")
+            raise Exception("Failed to authenticate")
 
     def logout(self):
         """
@@ -71,15 +70,13 @@ class Acunetix(requests.Session):
 
     def check_logging(self):
         try:
-            proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
             url = self.url + "/api/v1/me/stats"
             resp = self.get(url)
             if 'Unauthorized' not in resp.text:
                 self.authenticated = True
                 return True
             return False
-        except Exception as e:
-            print (e)
+        except:
             return False
 
     def check_connectivity(self):
@@ -93,7 +90,7 @@ class Acunetix(requests.Session):
             self.build = resp.json()['build']
             return self.build
         except Exception as e:
-            return False
+            raise e
 
     @property
     def stats(self):
@@ -184,10 +181,13 @@ class Acunetix(requests.Session):
         :param target_id: str(target_id)
         :return: boolean (True = Success)
         """
-        url = self.url + "/api/v1/targets/{}".format(target_id)
-        if self.delete(url).status_code == 204:
-            return True
-        return False
+        try:
+            url = self.url + "/api/v1/targets/{}".format(target_id)
+            if self.delete(url).status_code == 204:
+                return True
+            return {'error': 'Failed to delete target'}
+        except Exception as e:
+            raise e
 
     def create_target(self, address, description):
         """
@@ -196,12 +196,15 @@ class Acunetix(requests.Session):
         :param description: Some description about the target
         :return: JSON response from server
         """
-        url = self.url + "/api/v1/targets"
-        data = {"address": str(address), "description": str(description)}
-        resp = self.post(url, json=data)
-        if resp.status_code == 201:
-            return resp.json()
-        return False
+        try:
+            url = self.url + "/api/v1/targets"
+            data = {"address": str(address), "description": str(description)}
+            resp = self.post(url, json=data)
+            if resp.status_code == 201:
+                return resp.json()
+            return {'error': 'Failed to create target'}
+        except Exception as e:
+            raise e
 
     def configure_target(self, target_id, scan_speed=None, site_login=False,
                          authentication=None, technologies=None, custom_headers=None, custom_cookies=None):
@@ -218,46 +221,49 @@ class Acunetix(requests.Session):
         :param custom_cookies: Must be a list in this format [["url", "cookieValue"]]
         :return: Server returned configuration
         """
-        url = self.url + "/api/v1/targets/{}/configuration".format(target_id)
-        data = {}
+        try:
+            url = self.url + "/api/v1/targets/{}/configuration".format(target_id)
+            data = {}
 
-        if scan_speed and scan_speed in ["sequential", "slow", "moderate", "fast"]:
-            data.update({"scan_speed": scan_speed})
-        else:
-            data.update({"scan_speed": "fast"})
+            if scan_speed and scan_speed in ["sequential", "slow", "moderate", "fast"]:
+                data.update({"scan_speed": scan_speed})
+            else:
+                data.update({"scan_speed": "fast"})
 
-        if site_login and isinstance(site_login, list):
-            if len(site_login) == 3:
-                data.update({"login": {"kind": "automatic", "credentials": {"enabled": True, "username": site_login[1],
-                                                                            "password": site_login[2]}}})
-        else:
-            data.update({"login": {"kind": "none"}})
+            if site_login and isinstance(site_login, list):
+                if len(site_login) == 3:
+                    data.update({"login": {"kind": "automatic", "credentials": {"enabled": True, "username": site_login[1],
+                                                                                "password": site_login[2]}}})
+            else:
+                data.update({"login": {"kind": "none"}})
 
-        if authentication and isinstance(authentication, list):
-            if len(authentication) == 2:
-                data.update(
-                    {"authentication": {"enabled": True, "username": authentication[0], "password": authentication[1]}})
-        else:
-            data.update({"authentication": {"enabled": False}})
+            if authentication and isinstance(authentication, list):
+                if len(authentication) == 2:
+                    data.update(
+                        {"authentication": {"enabled": True, "username": authentication[0], "password": authentication[1]}})
+            else:
+                data.update({"authentication": {"enabled": False}})
 
-        if technologies and isinstance(technologies, list):
-            data.update({"technologies": technologies})
-        else:
-            data.update({"technologies": []})
+            if technologies and isinstance(technologies, list):
+                data.update({"technologies": technologies})
+            else:
+                data.update({"technologies": []})
 
-        if custom_headers and isinstance(custom_headers, list):
-            data.update({"custom_headers": custom_headers})
-        else:
-            data.update({"custom_headers": []})
+            if custom_headers and isinstance(custom_headers, list):
+                data.update({"custom_headers": custom_headers})
+            else:
+                data.update({"custom_headers": []})
 
-        if custom_cookies and isinstance(custom_cookies, list):
-            data.update({"custom_cookies": [{"url": i[0], "cookie": i[1]} for i in custom_cookies]})
-        else:
-            data.update({"custom_cookies": []})
+            if custom_cookies and isinstance(custom_cookies, list):
+                data.update({"custom_cookies": [{"url": i[0], "cookie": i[1]} for i in custom_cookies]})
+            else:
+                data.update({"custom_cookies": []})
 
-        resp = self.patch(url, json=data)
-        if resp.status_code == 204:
-            return self.get(url).json()
+            resp = self.patch(url, json=data)
+            if resp.status_code == 204:
+                return self.get(url).json()
+        except Exception as e:
+            raise e
 
     @property
     def scans(self):
@@ -296,23 +302,26 @@ class Acunetix(requests.Session):
                 ('11111111-1111-1111-1111-111111111125', 'OWASP Top 10 2017'),
         :return: scan_id of newly created scan
         """
-        url = self.url + "/api/v1/scans"
-        data = {
-            "target_id": target_id,
-            "profile_id": scan_type,
-            "schedule": {
-                "disable": False,
-                "start_date": None,
-                "time_sensitive": False
+        try:
+            url = self.url + "/api/v1/scans"
+            data = {
+                "target_id": target_id,
+                "profile_id": scan_type,
+                "schedule": {
+                    "disable": False,
+                    "start_date": None,
+                    "time_sensitive": False
+                }
             }
-        }
 
-        if report_templated_id:
-            data.update({"report_template_id": report_templated_id})
+            if report_templated_id:
+                data.update({"report_template_id": report_templated_id})
 
-        resp = self.post(url, json=data)
-        scan_id = resp.headers['Location'].split('/')[-1]
-        return scan_id
+            resp = self.post(url, json=data)
+            scan_id = resp.headers['Location'].split('/')[-1]
+            return scan_id
+        except Exception as e:
+            raise e
 
     def delete_scan(self, scan_id):
         """
@@ -333,31 +342,34 @@ class Acunetix(requests.Session):
         :param extra_stats: boolean (True fetches all stats, False fetches basic)
         :return:  dict(stats)
         """
-        url = self.url + "/api/v1/scans/{}".format(str(scan_id))
-        resp = self.get(url).json()
-
-        if 'code' in resp and resp['code'] == 404:  # if scan doesn't exists on server
-            return None
-
-        progress = resp['current_session']['progress']
-        status = resp['current_session']['status']
-        vuln_stats = None
-        if status != "scheduled":
-            vuln_stats = resp['current_session']['severity_counts']
-            vuln_stats["informational"] = vuln_stats.pop("info")
-
-        data = {'progress': progress, 'status': status, 'vuln_stats': vuln_stats,
-                'session_id': resp['current_session']['scan_session_id']}
-
-        if extra_stats:
-            url = url + '/results/{}/statistics'.format(resp['current_session']['scan_session_id'])
+        try:
+            url = self.url + "/api/v1/scans/{}".format(str(scan_id))
             resp = self.get(url).json()
-            aborted = resp['scanning_app']['wvs']['abort_requested']
-            start_date = resp['scanning_app']['wvs']['start_date']
-            end_data = resp['scanning_app']['wvs']['end_date']
-            data.update({'aborted': aborted, 'start_date': start_date, 'end_date': end_data})
 
-        return data
+            if 'code' in resp and resp['code'] == 404:  # if scan doesn't exists on server
+                return None
+
+            progress = resp['current_session']['progress']
+            status = resp['current_session']['status']
+            vuln_stats = None
+            if status != "scheduled":
+                vuln_stats = resp['current_session']['severity_counts']
+                vuln_stats["informational"] = vuln_stats.pop("info")
+
+            data = {'progress': progress, 'status': status, 'vuln_stats': vuln_stats,
+                    'session_id': resp['current_session']['scan_session_id']}
+
+            if extra_stats:
+                url = url + '/results/{}/statistics'.format(resp['current_session']['scan_session_id'])
+                resp = self.get(url).json()
+                aborted = resp['scanning_app']['wvs']['abort_requested']
+                start_date = resp['scanning_app']['wvs']['start_date']
+                end_data = resp['scanning_app']['wvs']['end_date']
+                data.update({'aborted': aborted, 'start_date': start_date, 'end_date': end_data})
+
+            return data
+        except Exception as e:
+            raise e
 
     def get_scan_vulnerabilities(self, scan_id):
         """
@@ -366,11 +378,14 @@ class Acunetix(requests.Session):
         :param scan_id: str(scan_id)
         :return: JSON response from server
         """
-        url = self.url + "/api/v1/scans/{}".format(str(scan_id))
-        resp = self.get(url).json()
-        url = url + '/results/{}/vulnerabilities'.format(resp['current_session']['scan_session_id'])
-        resp = self.get(url).json()['vulnerabilities']
-        return resp
+        try:
+            url = self.url + "/api/v1/scans/{}".format(str(scan_id))
+            resp = self.get(url).json()
+            url = url + '/results/{}/vulnerabilities'.format(resp['current_session']['scan_session_id'])
+            resp = self.get(url).json()['vulnerabilities']
+            return resp
+        except Exception as e:
+            raise e
 
     def get_target_vulnerabilities(self, target_id):
         """
@@ -391,12 +406,15 @@ class Acunetix(requests.Session):
         :param scan_session_id: (optional)
         :return: JSON response from server
         """
-        if not scan_session_id:
-            scan_session_id = self.scan_status(scan_id)['session_id']
-        url = self.url + "/api/v1/scans/{}/results/{}/vulnerabilities/{}".format(scan_id, scan_session_id,
-                                                                                 vulnerability_id)
-        resp = self.get(url).json()
-        return resp
+        try:
+            if not scan_session_id:
+                scan_session_id = self.scan_status(scan_id)['session_id']
+            url = self.url + "/api/v1/scans/{}/results/{}/vulnerabilities/{}".format(scan_id, scan_session_id,
+                                                                                    vulnerability_id)
+            resp = self.get(url).json()
+            return resp
+        except Exception as e:
+            raise e
 
     @property
     def report_templates(self):
