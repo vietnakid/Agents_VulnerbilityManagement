@@ -79,8 +79,8 @@ def main():
 	#{"scan_type": "High Risk Vulnerabilities", "target": "http://testphp.vulnweb.com"}
 	rawData = input()
 	jData = json.loads(rawData)
-	scan_type = jData.get('scan_type')
-	address = jData.get('target')
+	scan_type = jData.get('acunetix_scan_type')
+	address = jData.get('target_url')
 	if scan_type == 'Full Scan':
 		scan_type = '11111111-1111-1111-1111-111111111111'
 	elif scan_type == 'High Risk Vulnerabilities':

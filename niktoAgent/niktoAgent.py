@@ -3,6 +3,7 @@
 import json
 import os
 import time
+import sys
 
 
 class Nikto():
@@ -10,7 +11,9 @@ class Nikto():
         self.fileName = ""
 
     def gen_cmd(self, target):
-        opt = ['perl', './nikto/program/nikto.pl', '-host', target, '-o', self.fileName, '> /dev/null 2>&1']
+        path = sys.argv[0].replace("niktoAgent.py", "")
+        print (path)
+        opt = ['perl', path + 'nikto/program/nikto.pl', '-host', target, '-o', self.fileName, '> /dev/null 2>&1']
         cmd = ' '.join(opt)
         return cmd
 
@@ -26,7 +29,7 @@ class Nikto():
         try:
             with open(self.fileName, 'r') as js:
                 result = js.read()
-                result = result.replace(',]', ']')
+                result = result.replace(',]', ']').replace(',}', '}')
         except Exception as e:
             return json.dumps({'error': e})
         return result

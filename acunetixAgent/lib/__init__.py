@@ -42,6 +42,7 @@ class Acunetix(requests.Session):
             # print("[!] Error : {}".format(e.__repr__()))
             return False
 
+
     def login(self):
         """
         This should be the first call on initialized Acunetix object
@@ -70,9 +71,10 @@ class Acunetix(requests.Session):
 
     def check_logging(self):
         try:
+            proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
             url = self.url + "/api/v1/me/stats"
             resp = self.get(url)
-            if 'most_vulnerable_targets' in resp.text:
+            if 'Unauthorized' not in resp.text:
                 self.authenticated = True
                 return True
             return False
