@@ -69,7 +69,7 @@ def run(address, scan_type):
 	except KeyboardInterrupt:
 		print("Interrupt received, stopping...")
 	except Exception as e:
-		error = {'error': str(e)}
+		error = {'error': str(e), 'traceback': traceback.format_exc()}
 		print (json.dumps(error))
 		pass
 	finally:

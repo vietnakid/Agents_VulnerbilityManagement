@@ -47,26 +47,32 @@ class Acunetix(requests.Session):
         This should be the first call on initialized Acunetix object
         :return: Server info like license, expiry etc
         """
-        url = self.url + "/api/v1/me/login"
-        data = {"email": self.username, "password": self.password, "remember_me": True}
-        resp = self.post(url, json=data)
-        if resp.status_code == 204 and "X-Auth" in resp.headers:
-            self.authenticated = True
-            self.headers.update({"X-Auth": resp.headers['X-Auth']})
-            return self.me
-        else:
-            raise Exception("Failed to authenticate")
+        try:
+            url = self.url + "/api/v1/me/login"
+            data = {"email": self.username, "password": self.password, "remember_me": True}
+            resp = self.post(url, json=data)
+            if resp.status_code == 204 and "X-Auth" in resp.headers:
+                self.authenticated = True
+                self.headers.update({"X-Auth": resp.headers['X-Auth']})
+                return self.me
+            else:
+                raise Exception("Failed to authenticate")
+        except Exception as e:
+            raise e
 
     def logout(self):
         """
         logout whenever required
         :return: Boolean
         """
-        url = self.url + "/api/v1/me/logout"
-        resp = self.post(url, json={})
-        if resp.status_code == 204:
-            self.authenticated = False
-        return self.authenticated
+        try:
+            url = self.url + "/api/v1/me/logout"
+            resp = self.post(url, json={})
+            if resp.status_code == 204:
+                self.authenticated = False
+            return self.authenticated
+        except Exception as e:
+            raise e
 
     def check_logging(self):
         try:
@@ -98,17 +104,22 @@ class Acunetix(requests.Session):
         Gets server stats
         :return: JSON response from server
         """
-        url = self.url + "/api/v1/me/stats"
-        return self.get(url).json()
-
+        try:
+            url = self.url + "/api/v1/me/stats"
+            return self.get(url).json()
+        except Exception as e:
+            raise e
     @property
     def info(self):
         """
         Get server info
         :return: JSON response from server
         """
-        url = self.url + "/api/v1/info"
-        return self.get(url).json()
+        try:
+            url = self.url + "/api/v1/info"
+            return self.get(url).json()
+        except Exception as e:
+            raise e
 
     @property
     def me(self):
@@ -116,8 +127,11 @@ class Acunetix(requests.Session):
         Get server license info, expiry etc
         :return: JSON response from server
         """
-        url = self.url + "/api/v1/me"
-        return self.get(url).json()
+        try:
+            url = self.url + "/api/v1/me"
+            return self.get(url).json()
+        except Exception as e:
+            raise e
 
     @property
     def license(self):
@@ -133,11 +147,14 @@ class Acunetix(requests.Session):
         TODO
         :return: Notifications
         """
-        url = self.url + "/api/v1/notifications/count"
-        if self.get(url).json()['count'] > 0:
-            url = self.url + "/api/v1/notifications"
-            return self.get(url).json()['notifications']
-        return None
+        try:
+            url = self.url + "/api/v1/notifications/count"
+            if self.get(url).json()['count'] > 0:
+                url = self.url + "/api/v1/notifications"
+                return self.get(url).json()['notifications']
+            return None
+        except Exception as e:
+            raise e
 
     @property
     def scanning_profiles(self):
@@ -145,11 +162,14 @@ class Acunetix(requests.Session):
         Get scanning profiles (scan types configurations)
         :return: Scanning profiles with their ID
         """
-        url = self.url + "/api/v1/scanning_profiles"
-        profiles = self.get(url).json()["scanning_profiles"]
-        for profile in profiles:
-            self.SCANNING_PROFILES.update({profile["profile_id"]: profile["name"]})
-        return self.SCANNING_PROFILES
+        try:
+            url = self.url + "/api/v1/scanning_profiles"
+            profiles = self.get(url).json()["scanning_profiles"]
+            for profile in profiles:
+                self.SCANNING_PROFILES.update({profile["profile_id"]: profile["name"]})
+            return self.SCANNING_PROFILES
+        except Exception as e:
+            raise e
 
     @property
     def targets(self):
@@ -158,8 +178,11 @@ class Acunetix(requests.Session):
         Gets targets info from server
         :return: JSON Array (list) from server response
         """
-        url = self.url + "/api/v1/targets?l={}".format(100)
-        return self.get(url).json()['targets']
+        try:
+            url = self.url + "/api/v1/targets?l={}".format(100)
+            return self.get(url).json()['targets']
+        except Exception as e:
+            raise e
 
     def target(self, target_id, configuration=False):
         """
@@ -168,12 +191,15 @@ class Acunetix(requests.Session):
         :param configuration: boolean (whether to return target configuration information too)
         :return: JSON response from server
         """
-        url = self.url + "/api/v1/targets/{}".format(target_id)
-        target = self.get(url).json()
-        if configuration:
-            url = self.url + "/api/v1/targets/{}/configuration".format(target_id)
-            target.update({"configuration": self.get(url).json()})
-        return target
+        try:
+            url = self.url + "/api/v1/targets/{}".format(target_id)
+            target = self.get(url).json()
+            if configuration:
+                url = self.url + "/api/v1/targets/{}/configuration".format(target_id)
+                target.update({"configuration": self.get(url).json()})
+            return target
+        except Exception as e:
+            raise e
 
     def delete_target(self, target_id):
         """
@@ -267,9 +293,12 @@ class Acunetix(requests.Session):
 
     @property
     def scans(self):
-        url = self.url + "/api/v1/scans"
-        resp = self.get(url)
-        return resp
+        try:
+            url = self.url + "/api/v1/scans"
+            resp = self.get(url)
+            return resp
+        except Exception as e:
+            raise e
 
     def stop_scan(self, scan_id):
         """
@@ -277,9 +306,12 @@ class Acunetix(requests.Session):
         :param scan_id: str(scan_id)
         :return: response status_code
         """
-        url = self.url + "/api/v1/scans/{}/abort".format(str(scan_id))
-        resp = self.post(url, json={})
-        return resp.status_code
+        try:
+            url = self.url + "/api/v1/scans/{}/abort".format(str(scan_id))
+            resp = self.post(url, json={})
+            return resp.status_code
+        except Exception as e:
+            raise e
 
     def create_scan(self, target_id, scan_type, report_templated_id=None):
         """
@@ -330,10 +362,13 @@ class Acunetix(requests.Session):
         :param scan_id: str(scan_id)
         :return:
         """
-        self.stop_scan(scan_id)
-        url = self.url + "/api/v1/scans/{}".format(str(scan_id))
-        resp = self.delete(url)
-        return resp.status_code
+        try:
+            self.stop_scan(scan_id)
+            url = self.url + "/api/v1/scans/{}".format(str(scan_id))
+            resp = self.delete(url)
+            return resp.status_code
+        except Exception as e:
+            raise e
 
     def scan_status(self, scan_id, extra_stats=False):
         """
@@ -393,11 +428,14 @@ class Acunetix(requests.Session):
         :param target_id: str(target_id)
         :return: result or None
         """
-        scan_id = self.target(target_id)['last_scan_session_id']
-        if scan_id:
-            return self.get_scan_vulnerabilities(scan_id)
-        else:
-            return None
+        try:
+            scan_id = self.target(target_id)['last_scan_session_id']
+            if scan_id:
+                return self.get_scan_vulnerabilities(scan_id)
+            else:
+                return None
+        except Exception as e:
+            raise e
 
     def get_vulnerability_by_id(self, scan_id, vulnerability_id, scan_session_id=None):
         """
@@ -422,9 +460,12 @@ class Acunetix(requests.Session):
         Gets report templates from server
         :return: dict(Template ID and Info)
         """
-        url = self.url + "/api/v1/report_templates"
-        resp = self.get(url)
-        templates = resp.json()['templates']
-        for i in templates:
-            self.REPORT_TEMPLATES.update({i['template_id']: {"name": i["name"], "group": i['group']}})
-        return self.REPORT_TEMPLATES
+        try:
+            url = self.url + "/api/v1/report_templates"
+            resp = self.get(url)
+            templates = resp.json()['templates']
+            for i in templates:
+                self.REPORT_TEMPLATES.update({i['template_id']: {"name": i["name"], "group": i['group']}})
+            return self.REPORT_TEMPLATES
+        except Exception as e:
+            raise e
