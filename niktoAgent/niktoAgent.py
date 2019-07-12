@@ -12,7 +12,6 @@ class Nikto():
 
     def gen_cmd(self, target):
         path = sys.argv[0].replace("niktoAgent.py", "")
-        print (path)
         opt = ['perl', path + 'nikto/program/nikto.pl', '-host', target, '-o', self.fileName, '> /dev/null 2>&1']
         cmd = ' '.join(opt)
         return cmd
@@ -40,7 +39,7 @@ class Scan():
          # "newScan" default type scan
         self.type = request.get('type', "newScan")
         # "localhost" default target scan
-        self.target = request.get('target', "localhost")
+        self.target = request.get('target_url', "localhost")
 
     def run(self):
         if self.type == "newScan":
