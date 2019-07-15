@@ -2,9 +2,11 @@ import requests
 import time
 
 class Nessus(requests.Session):
-    def __init__(self, username=None, password=None, domain=None, ssl_verify=True, X_API_Token=None, *args, **kwargs):
-        if any([not username, not password, not domain]):
-            raise ValueError("username, password and domain are required")
+    def __init__(self, username=None, password=None, token=None, domain=None, ssl_verify=True, X_API_Token=None, *args, **kwargs):
+        if not domain:
+            raise ValueError("domain are required")
+        if not ((username and password) or token):
+            raise ValueError("username, password or token are required")
         requests.packages.urllib3.disable_warnings()
         super(Nessus, self).__init__()
         url = ["https://", domain]
@@ -20,10 +22,16 @@ class Nessus(requests.Session):
         }
         self.authenticated = False
         self.max_redirects = 0
-        self.username = username
-        self.password = password
-        self.X_API_Token = X_API_Token
+        self.headers.update({"X-API-Token": X_API_Token})
         self.url = "".join(url)
+        if username and password:
+            self.username = username
+            self.password = password
+        elif token:
+            self.token = token
+            self.headers.update({"X-Cookie": "token=" + token})
+            if not self.check_logging():
+                raise Exception('Token is not working')
         self.check_connectivity()
 
     def request(self, *args, **kwargs):
@@ -41,6 +49,21 @@ class Nessus(requests.Session):
         except Exception as e:
             raise e
 
+    def check_logging(self):
+        while True:
+            try:
+                url = self.url + "/session"
+                resp = self.get(url)
+                if 'Invalid Credentials' not in resp.text:
+                    self.authenticated = True
+                    return True
+                return False
+            except requests.exceptions.ConnectionError:
+                time.sleep(3)
+                pass
+            except:
+                return False
+
     def login(self):
         while True:
             try:
@@ -50,9 +73,7 @@ class Nessus(requests.Session):
                 if resp.status_code == 200:
                     token = resp.json()['token']
                     self.authenticated = True
-                    self.headers.update({"X-API-Token": self.X_API_Token})
                     self.headers.update({"X-Cookie": "token=" + token})
-                    # print (self.headers)
                     return True
                 else:
                     raise Exception('Failed to authenticate')
@@ -66,9 +87,7 @@ class Nessus(requests.Session):
         while True:
             try:
                 url = self.url + "/session"
-                # print (self.headers)
                 resp = self.delete(url)
-                # print (resp.text)
                 if resp.status_code == 200:
                     return True
                 else:
@@ -79,17 +98,17 @@ class Nessus(requests.Session):
             except Exception as e:
                 raise e
 
-    def create_scan(self, target, uuid):
+    def create_scan(self, target, uuid, ports):
         while True:
             try:
                 url = self.url + "/scans"
                 setting = {
                     "name": target,
                     "text_targets": target,
-                    "launch_now": True
+                    "launch_now": True,
+                    "portscan_range": ports
                 }
                 data = {"uuid":uuid, "settings": setting}
-                # print (json.dumps(data))
                 resp = self.post(url, json=data)
                 if resp.status_code == 200:
                     return resp.json()
