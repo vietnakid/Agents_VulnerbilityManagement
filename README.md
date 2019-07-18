@@ -4,20 +4,17 @@ Agents_VunerbilityManagement
 ### Deploy Agent
 
 * For Nmap Agent:
-	* Run file `install.sh` as root user in folder `nmapAgent`
+	* Run file `install.sh` in folder `nmapAgent` as root user
 
 * For NSE Agent:
-	* Run file `install.sh` as root user in folder `nseAgent`
+	* Run file `install.sh` in folder `nmapAgent` as root user
 
 * For Wappalyzer Agent:
-	* Install nodejs and npm first (Google search for this step)
-	* Use npm to install wappalyzer package in `https://www.npmjs.com/package/wappalyzer` by this command `npm i -g wappalyzer`
-	* Change directory to `wappalyzerAgent` and run `python3 deploy.py`
+	* Run file `install.sh` in folder `wappalyzerAgent` as root user
 
 * For CVE-Search Agent:
 	* If you not using docker, you have to re-configure in the deploy.py file. We recommend to use docker at here: https://hub.docker.com/r/ttimasdf/cve-search/
-	* Install xinetd
-	* Change directory to `cveSearchAgent` and run `python3 deploy.py`
+	* Run file `install.sh` in folder `cveSearchAgent` as root user
 
 * For Acunetix Agent:
 	* If you already have Acunetix, please fill your login to Acunetix in `Config/config.py`
@@ -32,4 +29,4 @@ Agents_VunerbilityManagement
 	* Run file `install.sh` as root user in folder `nessusAgent`
 
 * For Nikto Agent:
-	* Run file `install.sh` as root user in folder `niktoAgent`
+	* Run file `install.sh` in folder `niktoAgent` as root user
