@@ -10,14 +10,14 @@ def run(target, scan_type, ports):
         if cf.username and cf.password:
             ns = Nessus(username = cf.username, password = cf.password, domain = cf.domain, ssl_verify = cf.ssl_verify, X_API_Token=cf.X_API_Token)
             ns.login()
-        elif cf.token:
-            ns = Nessus(token = cf.token, domain = cf.domain, ssl_verify = cf.ssl_verify, X_API_Token=cf.X_API_Token)
+        elif cf.accessKey and cf.secretKey:
+            ns = Nessus(accessKey = cf.accessKey, secretKey = cf.secretKey, domain = cf.domain, ssl_verify = cf.ssl_verify, X_API_Token=cf.X_API_Token)
         scan = ns.create_scan(target=target, uuid=scan_type, ports=ports)
         scan_id = scan['scan']['id']
         while True:
             details_scan = ns.details_scan(scan_id)
-            if len(details_scan['hosts']) > 0 and 'scanprogresscurrent' in details_scan['hosts'][0] and details_scan['hosts'][0]['scanprogresscurrent'] == 99:
-                ns.stop_scan(scan_id)
+            if len(details_scan['info']) > 0 and details_scan['info']['status'] == 'completed':
+                #ns.stop_scan(scan_id)
                 break
             time.sleep(5)
 

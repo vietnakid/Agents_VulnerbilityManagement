@@ -28,7 +28,9 @@ class Nikto():
         try:
             with open(self.fileName, 'r') as js:
                 result = js.read()
-                result = result.replace(',]', ']').replace(',}', '}')
+                result = result.replace(',]', ']').replace(',}', '}'.replace('\n', ''))
+                if result.endswith('\n\n'):
+                    result.replace('\n\n', '')
         except Exception as e:
             return json.dumps({'error': e})
         return result
@@ -36,16 +38,10 @@ class Nikto():
 
 class Scan():
     def __init__(self, request):
-         # "newScan" default type scan
-        self.type = request.get('type', "newScan")
-        # "localhost" default target scan
         self.target = request.get('target_url', "localhost")
 
     def run(self):
-        if self.type == "newScan":
-            self.newScan()
-        else:
-            print('Not found')
+        self.newScan()
 
     def newScan(self):
         nikto = Nikto()
@@ -56,7 +52,7 @@ class Scan():
 
 
 def main():
-    # {"type": "newScan", "target": "https://nz4.xyz/getLink"}
+    # {"target_url": "https://nz4.xyz/getLink"}
     rawData = input()
     jData = json.loads(rawData)
     scan = Scan(jData)

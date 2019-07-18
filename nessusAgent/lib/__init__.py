@@ -2,11 +2,11 @@ import requests
 import time
 
 class Nessus(requests.Session):
-    def __init__(self, username=None, password=None, token=None, domain=None, ssl_verify=True, X_API_Token=None, *args, **kwargs):
+    def __init__(self, username=None, password=None, accessKey=None, secretKey=None, domain=None, ssl_verify=True, X_API_Token=None, *args, **kwargs):
         if not domain:
             raise ValueError("domain are required")
-        if not ((username and password) or token):
-            raise ValueError("username, password or token are required")
+        if not ((username and password) or (accessKey and secretKey)):
+            raise ValueError("username, password or APIKeys are required")
         requests.packages.urllib3.disable_warnings()
         super(Nessus, self).__init__()
         url = ["https://", domain]
@@ -27,11 +27,13 @@ class Nessus(requests.Session):
         if username and password:
             self.username = username
             self.password = password
-        elif token:
-            self.token = token
-            self.headers.update({"X-Cookie": "token=" + token})
+        elif accessKey and secretKey:
+            self.accessKey = accessKey
+            self.secretKey = secretKey
+            apiKeys = ["accessKey=" + accessKey, "secretKey=" + secretKey]
+            self.headers.update({"X-ApiKeys": ';'.join(apiKeys)})
             if not self.check_logging():
-                raise Exception('Token is not working')
+                raise Exception('X-ApiKeys is not working')
         self.check_connectivity()
 
     def request(self, *args, **kwargs):
