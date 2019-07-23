@@ -62,7 +62,7 @@ def run(address, scan_type):
 			objects['scan_details'].append(vuls_details)
 			#print vuls_details
 
-		# acunetix.delete_target(target_id)
+		acunetix.delete_target(target_id)
 		objects['target'] = address
 		# objects['scan_type'] = scan_type
 		print (json.dumps(objects))

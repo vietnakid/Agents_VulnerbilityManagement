@@ -17,7 +17,6 @@ def run(target, scan_type, ports):
         while True:
             details_scan = ns.details_scan(scan_id)
             if len(details_scan['info']) > 0 and details_scan['info']['status'] == 'completed':
-                #ns.stop_scan(scan_id)
                 break
             time.sleep(5)
 
@@ -28,6 +27,7 @@ def run(target, scan_type, ports):
             vuls_details = ns.plugins_details(scan_id, scan_vul['plugin_id'])
             objects['scan_details'].append(vuls_details)
             break
+        ns.delete_scan(scan_id)
         print (json.dumps(objects))
     except Exception as e:
         error = {'error': str(e), 'traceback': traceback.format_exc()}
