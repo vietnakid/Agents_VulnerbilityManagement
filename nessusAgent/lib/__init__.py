@@ -1,5 +1,6 @@
 import requests
 import time
+import urllib3
 
 class Nessus(requests.Session):
     def __init__(self, username=None, password=None, accessKey=None, secretKey=None, domain=None, ssl_verify=True, X_API_Token=None, *args, **kwargs):
@@ -7,7 +8,7 @@ class Nessus(requests.Session):
             raise ValueError("domain are required")
         if not ((username and password) or (accessKey and secretKey)):
             raise ValueError("username, password or APIKeys are required")
-        requests.packages.urllib3.disable_warnings()
+        requests.packages.urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         super(Nessus, self).__init__()
         url = ["https://", domain]
 
@@ -108,7 +109,8 @@ class Nessus(requests.Session):
                     "name": target,
                     "text_targets": target,
                     "launch_now": True,
-                    "portscan_range": ports
+                    "portscan_range": ports,
+                    "ping_the_remote_host": "no"
                 }
                 data = {"uuid":uuid, "settings": setting}
                 resp = self.post(url, json=data)
@@ -127,7 +129,7 @@ class Nessus(requests.Session):
                 url = self.url + "/scans/" + str(scan_id)
                 resp = self.delete(url)
                 if resp.status_code == 200:
-                    return resp.json()
+                    return
                 raise Exception('Failed to delete scan')
             except requests.exceptions.ConnectionError:
                 time.sleep(3)

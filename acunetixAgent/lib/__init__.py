@@ -1,5 +1,6 @@
 import hashlib
 import requests
+import urllib3
 
 class AuthenticationError(Exception):
     pass
@@ -12,7 +13,7 @@ class Acunetix(requests.Session):
     def __init__(self, username=None, password=None, domain=None, ssl_verify=True, *args, **kwargs):
         if any([not username, not password, not domain]):
             raise ValueError("username, password and domain are required")
-        requests.packages.urllib3.disable_warnings()
+        requests.packages.urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         super(Acunetix, self).__init__()
 
         url = ["https://", domain]

@@ -28,9 +28,7 @@ class Nikto():
         try:
             with open(self.fileName, 'r') as js:
                 result = js.read()
-                result = result.replace(',]', ']').replace(',}', '}'.replace('\n', ''))
-                if result.endswith('\n\n'):
-                    result.replace('\n\n', '')
+                result = result.replace(',]', ']').replace(',}', '').replace('\n', '')
         except Exception as e:
             return json.dumps({'error': e})
         return result
@@ -52,7 +50,7 @@ class Scan():
 
 
 def main():
-    # {"target_url": "https://nz4.xyz/getLink"}
+    # {"target_url": "http://fpt.edu.vn/"}
     rawData = input()
     jData = json.loads(rawData)
     scan = Scan(jData)
